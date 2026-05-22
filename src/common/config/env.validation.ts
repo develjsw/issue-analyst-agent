@@ -7,6 +7,7 @@ export const envValidationSchema = Joi.object({
   PORT: Joi.number().default(3000),
   DATABASE_URL: Joi.string().required(),
   QDRANT_URL: Joi.string().uri().required(),
+  QDRANT_COLLECTION: Joi.string().default('documents'),
   REDIS_URL: Joi.string().required(),
   // 임베딩 기능 도입 시 required로 전환
   OPENAI_API_KEY: Joi.string().allow('').default(''),
