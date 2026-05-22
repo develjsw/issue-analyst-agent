@@ -122,7 +122,7 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 ```
 
 - **type**: `feat` `fix` `docs` `refactor` `test` `chore` `perf` `build` `ci`
-- **scope**: `issue` `document` `rag` `agent` `tool` `vector` `eval` `infra`
+- **scope**: `issue` `document` `rag` `agent` `tool` `vector` `eval` `infra` `common` `config`
 - **예시**: `feat(rag): 문서 chunking·embedding 파이프라인 구현`
 - **작업 단위 커밋**: 많은 양을 몰아서 커밋하지 않고 의미 있는 작업 단위마다 나눠서 커밋함.
   하나의 커밋은 하나의 목적(기능/수정/리팩터링)만 담고, 변경 이력이 곧 학습 기록이 되도록
