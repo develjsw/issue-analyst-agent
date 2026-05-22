@@ -21,18 +21,12 @@ export class DocumentService {
   }
 
   async findAll(query: QueryDocumentDto): Promise<PaginatedDocuments> {
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 20;
+    const { type, isIndexed, page = 1, limit = 20 } = query;
     const skip = (page - 1) * limit;
 
     const [items, total] = await Promise.all([
-      this.repo.findMany({
-        type: query.type,
-        isIndexed: query.isIndexed,
-        skip,
-        take: limit,
-      }),
-      this.repo.count({ type: query.type, isIndexed: query.isIndexed }),
+      this.repo.findMany({ type, isIndexed, skip, take: limit }),
+      this.repo.count({ type, isIndexed }),
     ]);
 
     return { items, total, page, limit };
