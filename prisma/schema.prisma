@@ -20,3 +20,18 @@ model Issue {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// RAG 입력원 — API 문서·기획서·에러 로그 등
+model Document {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  content   String   @db.LongText
+  type      String   @db.VarChar(50) // API_DOC | PLANNING_DOC | ERROR_LOG | ISSUE_HISTORY
+  source    String?  @db.VarChar(500) // 원본 URL·파일명
+  isIndexed Boolean  @default(false) // Qdrant 임베딩 완료 여부
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type]) // type 기반 Qdrant 메타 필터링 쿼리 대비
+  @@index([isIndexed]) // 미인덱스 문서 배치 조회 대비
+}
