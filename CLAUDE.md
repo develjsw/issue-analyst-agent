@@ -86,7 +86,9 @@ src/
  │   ├─ issue.controller.ts
  │   └─ issue.module.ts
  ├─ document/              # issue/ 와 동일 레이아웃
- ├─ rag/                   # chunker, embedding, retriever, reranker
+ ├─ rag/                   # 도메인 모듈 표준 레이아웃 (dto/ + service/)
+ │   ├─ dto/
+ │   └─ service/           # text-chunker, embedding, retriever, rag.service
  ├─ agent/
  │   ├─ graph/             # issue-analysis.graph.ts, *.state.ts
  │   └─ node/              # classify, retrieve, analyze, plan, report

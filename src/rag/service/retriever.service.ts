@@ -5,7 +5,7 @@ import type {
   SearchResult,
   VectorStore,
 } from '../../vector/vector-store.interface';
-import { EmbeddingService } from '../embedding/embedding.service';
+import { EmbeddingService } from './embedding.service';
 
 const DEFAULT_TOP_K = 5;
 

@@ -1,14 +1,14 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { VECTOR_STORE } from '../vector/vector-store.interface';
+import { VECTOR_STORE } from '../../vector/vector-store.interface';
 import type {
   SearchFilter,
   SearchResult,
   VectorStore,
-} from '../vector/vector-store.interface';
-import { DocumentService } from '../document/service/document.service';
-import { TextChunker } from './chunker/text-chunker';
-import { EmbeddingService } from './embedding/embedding.service';
-import { RetrieverService } from './retriever/retriever.service';
+} from '../../vector/vector-store.interface';
+import { DocumentService } from '../../document/service/document.service';
+import { TextChunker } from './text-chunker.service';
+import { EmbeddingService } from './embedding.service';
+import { RetrieverService } from './retriever.service';
 
 @Injectable()
 export class RagService {

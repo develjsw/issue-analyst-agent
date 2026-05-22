@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { DocumentModule } from '../document/document.module';
 import { VectorModule } from '../vector/vector.module';
-import { TextChunker } from './chunker/text-chunker';
-import { EmbeddingService } from './embedding/embedding.service';
 import { RagController } from './rag.controller';
-import { RagService } from './rag.service';
-import { RetrieverService } from './retriever/retriever.service';
+import { EmbeddingService } from './service/embedding.service';
+import { RagService } from './service/rag.service';
+import { RetrieverService } from './service/retriever.service';
+import { TextChunker } from './service/text-chunker.service';
 
 @Module({
   imports: [VectorModule, DocumentModule],

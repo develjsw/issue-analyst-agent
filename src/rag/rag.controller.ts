@@ -8,33 +8,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import {
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsString,
-  Min,
-  MinLength,
-} from 'class-validator';
-import { DOCUMENT_TYPES } from '../document/dto/create-document.dto';
 import { SearchResult } from '../vector/vector-store.interface';
-import { RagService } from './rag.service';
-
-class SearchDto {
-  @IsString()
-  @MinLength(1)
-  query: string;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  topK?: number;
-
-  @IsOptional()
-  @IsString()
-  @IsIn(DOCUMENT_TYPES)
-  type?: string;
-}
+import { SearchDto } from './dto/search.dto';
+import { RagService } from './service/rag.service';
 
 @ApiTags('RAG')
 @Controller('rag')
