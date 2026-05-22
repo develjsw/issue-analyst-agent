@@ -24,10 +24,7 @@ export class DocumentRepository {
     take,
   }: FindManyFilter): Promise<Document[]> {
     return this.prisma.document.findMany({
-      where: {
-        ...(type !== undefined && { type }),
-        ...(isIndexed !== undefined && { isIndexed }),
-      },
+      where: { type, isIndexed },
       orderBy: { createdAt: 'desc' },
       skip,
       take,
@@ -36,10 +33,7 @@ export class DocumentRepository {
 
   count(filter: Pick<FindManyFilter, 'type' | 'isIndexed'>): Promise<number> {
     return this.prisma.document.count({
-      where: {
-        ...(filter.type !== undefined && { type: filter.type }),
-        ...(filter.isIndexed !== undefined && { isIndexed: filter.isIndexed }),
-      },
+      where: { type: filter.type, isIndexed: filter.isIndexed },
     });
   }
 
