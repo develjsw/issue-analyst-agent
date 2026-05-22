@@ -18,7 +18,7 @@ RAG와 Tool Calling 기반 Agent Workflow로 줄이는 것을 목표로 함
 - 근거 기반 리포트 생성
 
 ### 4. 아키텍처
-NestJS API Server + LangGraph Agent + Vector DB + RDB(미정)
+NestJS API Server + LangGraph Agent + Qdrant(Vector DB) + MySQL(RDB)
 
 ### 5. RAG Pipeline
 문서 업로드 → chunking → embedding → vector 저장 → 검색 → reranking → 답변 생성
@@ -33,7 +33,7 @@ classify → retrieve → analyze → plan → report
 - human review 필요 여부 표시
 
 ### 8. 기술 스택
-Node.js, TypeScript, NestJS, LangGraph.js, LangChain.js, Vector DB(미정), RDB(미정), Redis, Docker
+Node.js, TypeScript, NestJS, Prisma, MySQL, Qdrant, Redis, LangGraph.js, LangChain.js, Docker
 
 ### 9. 실행 방법
 ```shell
