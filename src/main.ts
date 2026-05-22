@@ -3,7 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/exception/all-exceptions.filter';
-import { ResponseInterceptor } from './common/response/response.interceptor';
+import { ResponseInterceptor } from './common/interceptor/response.interceptor';
 import { setupSwagger } from './common/swagger/setup-swagger';
 
 async function bootstrap() {

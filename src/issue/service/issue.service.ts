@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Issue } from '@prisma/client';
-import { CreateIssueDto } from './dto/create-issue.dto';
-import { UpdateIssueDto } from './dto/update-issue.dto';
-import { IssueRepository } from './issue.repository';
+import { CreateIssueDto } from '../dto/create-issue.dto';
+import { UpdateIssueDto } from '../dto/update-issue.dto';
+import { IssueRepository } from '../repository/issue.repository';
 
 @Injectable()
 export class IssueService {

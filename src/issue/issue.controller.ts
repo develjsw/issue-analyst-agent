@@ -14,7 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Issue } from '@prisma/client';
 import { CreateIssueDto } from './dto/create-issue.dto';
 import { UpdateIssueDto } from './dto/update-issue.dto';
-import { IssueService } from './issue.service';
+import { IssueService } from './service/issue.service';
 
 @ApiTags('issues')
 @Controller('issues')

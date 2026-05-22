@@ -78,9 +78,14 @@ prisma/
  └─ schema.prisma          # Prisma 스키마 (중앙 관리)
 src/
  ├─ app.module.ts
- ├─ common/                # config, logger, exception, response, prisma
- ├─ issue/                 # dto, controller, service, repository
- ├─ document/
+ ├─ common/                # config, logger, exception, interceptor, prisma, swagger
+ ├─ issue/                 # 도메인 모듈 표준 레이아웃
+ │   ├─ dto/
+ │   ├─ service/           # *.service.ts
+ │   ├─ repository/        # *.repository.ts
+ │   ├─ issue.controller.ts
+ │   └─ issue.module.ts
+ ├─ document/              # issue/ 와 동일 레이아웃
  ├─ rag/                   # chunker, embedding, retriever, reranker
  ├─ agent/
  │   ├─ graph/             # issue-analysis.graph.ts, *.state.ts
