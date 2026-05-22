@@ -8,6 +8,7 @@ import { loggerConfig } from './common/logger/logger.config';
 import { PrismaModule } from './common/prisma/prisma.module';
 import { DocumentModule } from './document/document.module';
 import { IssueModule } from './issue/issue.module';
+import { RagModule } from './rag/rag.module';
 import { VectorModule } from './vector/vector.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { VectorModule } from './vector/vector.module';
     IssueModule,
     DocumentModule,
     VectorModule,
+    RagModule,
   ],
   controllers: [AppController],
   providers: [AppService],
