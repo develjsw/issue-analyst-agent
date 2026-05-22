@@ -11,3 +11,6 @@ dist
 .env
 .env.local
 *.log
+
+# 개인 진행 메모 (공유 안 함)
+PROGRESS.md
