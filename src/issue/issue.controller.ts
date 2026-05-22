@@ -23,25 +23,25 @@ export class IssueController {
 
   @Post()
   @ApiOperation({ summary: '이슈 등록' })
-  create(@Body() dto: CreateIssueDto): Promise<Issue> {
+  async create(@Body() dto: CreateIssueDto): Promise<Issue> {
     return this.service.create(dto);
   }
 
   @Get()
   @ApiOperation({ summary: '이슈 목록 조회' })
-  findAll(): Promise<Issue[]> {
+  async findAll(): Promise<Issue[]> {
     return this.service.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: '이슈 단건 조회' })
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<Issue> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Issue> {
     return this.service.findOne(id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: '이슈 수정' })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateIssueDto,
   ): Promise<Issue> {
@@ -51,7 +51,7 @@ export class IssueController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '이슈 삭제' })
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.service.remove(id);
   }
 }
