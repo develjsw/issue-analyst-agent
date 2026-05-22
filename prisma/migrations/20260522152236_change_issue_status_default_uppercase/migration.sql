@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `issue` MODIFY `status` VARCHAR(191) NOT NULL DEFAULT 'OPEN';

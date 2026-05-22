@@ -1,6 +1,3 @@
-// Prisma 스키마 (중앙 관리)
-// 변경 후 반드시 `npx prisma migrate dev` 로 마이그레이션 생성
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,28 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// QA 이슈 (분석 대상 핵심 엔티티) — 초기 baseline, 이후 마이그레이션으로 진화
 model Issue {
   id        Int      @id @default(autoincrement())
   title     String
   body      String   @db.Text
   category  String? // classify Tool이 채우는 분류값
-  status    String   @default("open")
+  status    String   @default("OPEN")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("issue") // OS별 대소문자 민감성 회피
 }
 
-// RAG 입력원 — API 문서·기획서·에러 로그 등
 model Document {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(255)
   content   String   @db.LongText
   type      String   @db.VarChar(50) // API_DOC | PLANNING_DOC | ERROR_LOG | ISSUE_HISTORY
-  source    String?  @db.VarChar(500) // 원본 URL·파일명
-  isIndexed Boolean  @default(false) // Qdrant 임베딩 완료 여부
+  source    String?  @db.VarChar(500)
+  isIndexed Boolean  @default(false) // Qdrant 임베딩 여부
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([type]) // type 기반 Qdrant 메타 필터링 쿼리 대비
-  @@index([isIndexed]) // 미인덱스 문서 배치 조회 대비
+  @@index([type]) // Qdrant 메타 필터링용
+  @@index([isIndexed]) // 미인덱스 배치 조회용
+  @@map("document") // OS별 대소문자 민감성 회피
 }
