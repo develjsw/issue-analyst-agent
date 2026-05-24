@@ -89,14 +89,16 @@ src/
  │   ├─ issue.controller.ts
  │   └─ issue.module.ts
  ├─ document/              # issue/ 와 동일 레이아웃
- ├─ rag/                   # 도메인 모듈 표준 레이아웃 (dto/ + service/)
+ ├─ rag/                   # 도메인 모듈 표준 레이아웃
  │   ├─ dto/
- │   └─ service/           # text-chunker, embedding, retriever, rag.service
+ │   ├─ helper/            # chunker (순수 함수)
+ │   └─ service/           # retriever, rag.service
  ├─ agent/
  │   ├─ graph/             # issue-analysis.graph.ts, *.state.ts
  │   └─ node/              # classify, retrieve, analyze, plan, report
  ├─ tool/                  # tool-registry + tools/*
- ├─ vector/                # VectorStore 인터페이스 + QdrantVectorStore 구현
+ ├─ embedding/             # interface/(EmbedderInterface) + service/(OpenAIEmbedderService)
+ ├─ vector/                # interface/(VectorStoreInterface) + service/(QdrantVectorStoreService)
  └─ evaluation/            # 검색/응답 품질 평가, dataset
 ```
 
@@ -108,6 +110,12 @@ src/
 
 - **네이밍**: 파일 `kebab-case.role.ts` (예: `classify-issue.tool.ts`), 클래스 `PascalCase`,
   변수/함수 `camelCase`, 상수 `UPPER_SNAKE_CASE`
+- **계층 접미사·폴더**: service는 `~Service`+`service/`, 포트 인터페이스는 `~Interface`+`interface/`,
+  helper는 `helper/`. 파일명과 명칭 일치(`embedder.interface.ts`→`EmbedderInterface`). 데이터 형태 타입은 예외
+- **모듈 폴더 루트**: `*.module.ts`·`*.controller.ts`만 두고 나머지는 하위 폴더(dto·service·interface·repository·helper)로
+- **의존성 주입**: 구현체가 아닌 포트(인터페이스)를 DI 토큰으로 주입. 주입 필드명은 클래스명 기준
+  camelCase(`IssueService`→`issueService`), 단 포트 주입 필드는 역할명 사용(`embedder`·`vectorStore`)
+- **async 통일**: 서비스·리포지토리 메서드는 Promise 반환 시 pass-through라도 `async`로 통일
 - **DTO**: 모든 입출력은 DTO + `class-validator`로 검증
 - **예외 처리**: 전역 ExceptionFilter 사용, 에러는 삼키지 말고 컨텍스트와 함께 로깅·전파
 - **응답 포맷**: 공통 응답 래퍼로 일관 (`{ data, meta }` 형태)
