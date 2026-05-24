@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { VECTOR_STORE } from '../../vector/vector-store.interface';
 import type {
@@ -26,11 +27,6 @@ export class RagService {
   async indexDocument(documentId: number): Promise<void> {
     const doc = await this.documentService.findOne(documentId);
 
-    // 이미 인덱싱된 문서는 재인덱싱 전에 기존 벡터 삭제
-    if (doc.isIndexed) {
-      await this.vectorStore.deleteByDocumentId(documentId);
-    }
-
     const chunks = this.chunker.split(doc.content);
     this.logger.log(`문서 ${documentId} 청킹 완료: ${chunks.length}개`);
 
@@ -38,8 +34,11 @@ export class RagService {
       chunks.map((c) => c.content),
     );
 
+    // 재인덱싱 시 고아벡터 방지를 위해 기존벡터 제거
+    await this.vectorStore.deleteByDocumentId(documentId);
+
     const points = chunks.map((chunk, i) => ({
-      id: `${documentId}-${chunk.index}`,
+      id: randomUUID(),
       vector: vectors[i],
       payload: {
         documentId,
