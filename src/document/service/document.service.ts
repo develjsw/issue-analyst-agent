@@ -14,10 +14,10 @@ export interface PaginatedDocuments {
 
 @Injectable()
 export class DocumentService {
-  constructor(private readonly repo: DocumentRepository) {}
+  constructor(private readonly documentRepository: DocumentRepository) {}
 
-  create(dto: CreateDocumentDto): Promise<Document> {
-    return this.repo.create(dto);
+  async create(dto: CreateDocumentDto): Promise<Document> {
+    return this.documentRepository.create(dto);
   }
 
   async findAll(query: QueryDocumentDto): Promise<PaginatedDocuments> {
@@ -25,15 +25,15 @@ export class DocumentService {
     const skip = (page - 1) * limit;
 
     const [items, total] = await Promise.all([
-      this.repo.findMany({ type, isIndexed, skip, take: limit }),
-      this.repo.count({ type, isIndexed }),
+      this.documentRepository.findMany({ type, isIndexed, skip, take: limit }),
+      this.documentRepository.count({ type, isIndexed }),
     ]);
 
     return { items, total, page, limit };
   }
 
   async findOne(id: number): Promise<Document> {
-    const doc = await this.repo.findById(id);
+    const doc = await this.documentRepository.findById(id);
     if (!doc) {
       throw new NotFoundException(`문서를 찾을 수 없음: id=${id}`);
     }
@@ -42,17 +42,17 @@ export class DocumentService {
 
   async update(id: number, dto: UpdateDocumentDto): Promise<Document> {
     await this.findOne(id);
-    return this.repo.update(id, dto);
+    return this.documentRepository.update(id, dto);
   }
 
   // RAG 파이프라인이 임베딩 완료 후 호출
   async markIndexed(id: number): Promise<Document> {
     await this.findOne(id);
-    return this.repo.update(id, { isIndexed: true });
+    return this.documentRepository.update(id, { isIndexed: true });
   }
 
   async remove(id: number): Promise<void> {
     await this.findOne(id);
-    await this.repo.delete(id);
+    await this.documentRepository.delete(id);
   }
 }

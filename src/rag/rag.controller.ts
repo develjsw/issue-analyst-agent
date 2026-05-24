@@ -8,14 +8,14 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { SearchResult } from '../vector/vector-store.interface';
+import { SearchResult } from '../vector/interface/vector-store.interface';
 import { SearchDto } from './dto/search.dto';
 import { RagService } from './service/rag.service';
 
 @ApiTags('RAG')
 @Controller('rag')
 export class RagController {
-  constructor(private readonly service: RagService) {}
+  constructor(private readonly ragService: RagService) {}
 
   @Post('index/:documentId')
   @HttpCode(HttpStatus.OK)
@@ -23,13 +23,13 @@ export class RagController {
   async indexDocument(
     @Param('documentId', ParseIntPipe) documentId: number,
   ): Promise<void> {
-    return this.service.indexDocument(documentId);
+    return this.ragService.indexDocument(documentId);
   }
 
   @Post('search')
   @ApiOperation({ summary: '유사 청크 검색' })
   async search(@Body() dto: SearchDto): Promise<SearchResult[]> {
     const { query, topK, type } = dto;
-    return this.service.retrieve(query, topK, { type });
+    return this.ragService.retrieve(query, topK, { type });
   }
 }

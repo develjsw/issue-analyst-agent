@@ -19,24 +19,24 @@ import { IssueService } from './service/issue.service';
 @ApiTags('Issue')
 @Controller('issue')
 export class IssueController {
-  constructor(private readonly service: IssueService) {}
+  constructor(private readonly issueService: IssueService) {}
 
   @Post()
   @ApiOperation({ summary: '이슈 등록' })
   async create(@Body() dto: CreateIssueDto): Promise<Issue> {
-    return this.service.create(dto);
+    return this.issueService.create(dto);
   }
 
   @Get()
   @ApiOperation({ summary: '이슈 목록 조회' })
   async findAll(): Promise<Issue[]> {
-    return this.service.findAll();
+    return this.issueService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: '이슈 단건 조회' })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Issue> {
-    return this.service.findOne(id);
+    return this.issueService.findOne(id);
   }
 
   @Patch(':id')
@@ -45,13 +45,13 @@ export class IssueController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateIssueDto,
   ): Promise<Issue> {
-    return this.service.update(id, dto);
+    return this.issueService.update(id, dto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '이슈 삭제' })
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.service.remove(id);
+    return this.issueService.remove(id);
   }
 }

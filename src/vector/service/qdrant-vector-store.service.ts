@@ -6,23 +6,28 @@ import {
   SearchFilter,
   SearchResult,
   VectorPoint,
-  VectorStore,
-} from './vector-store.interface';
+  VectorStoreInterface,
+} from '../interface/vector-store.interface';
 
 const EMBEDDING_DIMENSION = 1536; // text-embedding-3-small
 const DISTANCE = 'Cosine';
 
 @Injectable()
-export class QdrantVectorStore implements VectorStore, OnModuleInit {
-  private readonly logger = new Logger(QdrantVectorStore.name);
+export class QdrantVectorStoreService
+  implements VectorStoreInterface, OnModuleInit
+{
+  private readonly logger = new Logger(QdrantVectorStoreService.name);
   private readonly qdrant: QdrantClient;
   private readonly collection: string;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     this.qdrant = new QdrantClient({
-      url: this.config.get<string>('QDRANT_URL'),
+      url: this.configService.get<string>('QDRANT_URL'),
     });
-    this.collection = this.config.get<string>('QDRANT_COLLECTION', 'documents');
+    this.collection = this.configService.get<string>(
+      'QDRANT_COLLECTION',
+      'documents',
+    );
   }
 
   // 부팅 시 컬렉션 없으면 자동 생성
@@ -73,7 +78,7 @@ export class QdrantVectorStore implements VectorStore, OnModuleInit {
     }));
   }
 
-  async deleteByDocumentId(documentId: number): Promise<void> {
+  async deleteById(documentId: number): Promise<void> {
     await this.qdrant.delete(this.collection, {
       wait: true,
       filter: {

@@ -1,28 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { Issue, Prisma } from '@prisma/client';
-import { PrismaService } from '../../common/prisma/prisma.service';
+import { PrismaService } from '../../common/prisma/service/prisma.service';
 
 @Injectable()
 export class IssueRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  create(data: Prisma.IssueCreateInput): Promise<Issue> {
-    return this.prisma.issue.create({ data });
+  async create(data: Prisma.IssueCreateInput): Promise<Issue> {
+    return this.prismaService.issue.create({ data });
   }
 
-  findMany(): Promise<Issue[]> {
-    return this.prisma.issue.findMany({ orderBy: { createdAt: 'desc' } });
+  async findMany(): Promise<Issue[]> {
+    return this.prismaService.issue.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  findById(id: number): Promise<Issue | null> {
-    return this.prisma.issue.findUnique({ where: { id } });
+  async findById(id: number): Promise<Issue | null> {
+    return this.prismaService.issue.findUnique({ where: { id } });
   }
 
-  update(id: number, data: Prisma.IssueUpdateInput): Promise<Issue> {
-    return this.prisma.issue.update({ where: { id }, data });
+  async update(id: number, data: Prisma.IssueUpdateInput): Promise<Issue> {
+    return this.prismaService.issue.update({ where: { id }, data });
   }
 
-  delete(id: number): Promise<Issue> {
-    return this.prisma.issue.delete({ where: { id } });
+  async delete(id: number): Promise<Issue> {
+    return this.prismaService.issue.delete({ where: { id } });
   }
 }

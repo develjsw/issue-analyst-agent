@@ -24,12 +24,12 @@ import {
 @ApiTags('Document')
 @Controller('document')
 export class DocumentController {
-  constructor(private readonly service: DocumentService) {}
+  constructor(private readonly documentService: DocumentService) {}
 
   @Post()
   @ApiOperation({ summary: '문서 등록' })
   async create(@Body() dto: CreateDocumentDto): Promise<Document> {
-    return this.service.create(dto);
+    return this.documentService.create(dto);
   }
 
   @Get()
@@ -37,13 +37,13 @@ export class DocumentController {
     summary: '문서 목록 조회 (타입·인덱싱 여부 필터, 페이지네이션)',
   })
   async findAll(@Query() query: QueryDocumentDto): Promise<PaginatedDocuments> {
-    return this.service.findAll(query);
+    return this.documentService.findAll(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: '문서 단건 조회' })
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Document> {
-    return this.service.findOne(id);
+    return this.documentService.findOne(id);
   }
 
   @Patch(':id')
@@ -52,20 +52,20 @@ export class DocumentController {
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateDocumentDto,
   ): Promise<Document> {
-    return this.service.update(id, dto);
+    return this.documentService.update(id, dto);
   }
 
   @Patch(':id/index')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: '문서 임베딩 완료 처리 (RAG 파이프라인 호출용)' })
   async markIndexed(@Param('id', ParseIntPipe) id: number): Promise<Document> {
-    return this.service.markIndexed(id);
+    return this.documentService.markIndexed(id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: '문서 삭제' })
   async remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.service.remove(id);
+    return this.documentService.remove(id);
   }
 }

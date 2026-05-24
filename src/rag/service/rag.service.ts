@@ -1,14 +1,15 @@
 import { randomUUID } from 'node:crypto';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { VECTOR_STORE } from '../../vector/vector-store.interface';
+import { VECTOR_STORE } from '../../vector/interface/vector-store.interface';
 import type {
   SearchFilter,
   SearchResult,
-  VectorStore,
-} from '../../vector/vector-store.interface';
+  VectorStoreInterface,
+} from '../../vector/interface/vector-store.interface';
+import { EMBEDDER } from '../../embedding/interface/embedder.interface';
+import type { EmbedderInterface } from '../../embedding/interface/embedder.interface';
 import { DocumentService } from '../../document/service/document.service';
-import { TextChunker } from './text-chunker.service';
-import { EmbeddingService } from './embedding.service';
+import { chunkText } from '../helper/chunker';
 import { RetrieverService } from './retriever.service';
 
 @Injectable()
@@ -16,10 +17,9 @@ export class RagService {
   private readonly logger = new Logger(RagService.name);
 
   constructor(
-    private readonly chunker: TextChunker,
-    private readonly embedding: EmbeddingService,
-    private readonly retriever: RetrieverService,
-    @Inject(VECTOR_STORE) private readonly vectorStore: VectorStore,
+    @Inject(EMBEDDER) private readonly embedder: EmbedderInterface,
+    @Inject(VECTOR_STORE) private readonly vectorStore: VectorStoreInterface,
+    private readonly retrieverService: RetrieverService,
     private readonly documentService: DocumentService,
   ) {}
 
@@ -27,15 +27,13 @@ export class RagService {
   async indexDocument(documentId: number): Promise<void> {
     const doc = await this.documentService.findOne(documentId);
 
-    const chunks = this.chunker.split(doc.content);
+    const chunks = chunkText(doc.content);
     this.logger.log(`문서 ${documentId} 청킹 완료: ${chunks.length}개`);
 
-    const vectors = await this.embedding.embedMany(
-      chunks.map((c) => c.content),
-    );
+    const vectors = await this.embedder.embedMany(chunks.map((c) => c.content));
 
     // 재인덱싱 시 고아벡터 방지를 위해 기존벡터 제거
-    await this.vectorStore.deleteByDocumentId(documentId);
+    await this.vectorStore.deleteById(documentId);
 
     const points = chunks.map((chunk, i) => ({
       id: randomUUID(),
@@ -55,11 +53,11 @@ export class RagService {
     this.logger.log(`문서 ${documentId} 인덱싱 완료`);
   }
 
-  retrieve(
+  async retrieve(
     query: string,
     topK?: number,
     filter?: SearchFilter,
   ): Promise<SearchResult[]> {
-    return this.retriever.retrieve(query, topK, filter);
+    return this.retrieverService.retrieve(query, topK, filter);
   }
 }

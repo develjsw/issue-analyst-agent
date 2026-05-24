@@ -1,17 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
+import { EmbedderInterface } from '../interface/embedder.interface';
 
 const MODEL = 'text-embedding-3-small';
 
 @Injectable()
-export class EmbeddingService {
-  private readonly logger = new Logger(EmbeddingService.name);
+export class OpenAIEmbedderService implements EmbedderInterface {
+  private readonly logger = new Logger(OpenAIEmbedderService.name);
   private readonly openai: OpenAI;
 
-  constructor(private readonly config: ConfigService) {
+  constructor(private readonly configService: ConfigService) {
     this.openai = new OpenAI({
-      apiKey: this.config.getOrThrow<string>('OPENAI_API_KEY'),
+      apiKey: this.configService.getOrThrow<string>('OPENAI_API_KEY'),
     });
   }
 

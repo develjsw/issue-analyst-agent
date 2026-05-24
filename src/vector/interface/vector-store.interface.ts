@@ -10,7 +10,7 @@ export interface ChunkPayload {
 }
 
 export interface VectorPoint {
-  id: string; // `${documentId}-${chunkIndex}`
+  id: string;
   vector: number[];
   payload: ChunkPayload;
 }
@@ -24,12 +24,12 @@ export interface SearchFilter {
   type?: string;
 }
 
-export interface VectorStore {
+export interface VectorStoreInterface {
   upsert(points: VectorPoint[]): Promise<void>;
   search(
     vector: number[],
     limit: number,
     filter?: SearchFilter,
   ): Promise<SearchResult[]>;
-  deleteByDocumentId(documentId: number): Promise<void>;
+  deleteById(documentId: number): Promise<void>;
 }

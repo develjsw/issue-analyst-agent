@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { QdrantVectorStore } from './qdrant-vector-store';
-import { VECTOR_STORE } from './vector-store.interface';
+import { VECTOR_STORE } from './interface/vector-store.interface';
+import { QdrantVectorStoreService } from './service/qdrant-vector-store.service';
 
 @Module({
   providers: [
     {
       provide: VECTOR_STORE,
-      useClass: QdrantVectorStore,
+      useClass: QdrantVectorStoreService,
     },
   ],
   exports: [VECTOR_STORE],
