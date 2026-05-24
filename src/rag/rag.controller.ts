@@ -29,6 +29,7 @@ export class RagController {
   @Post('search')
   @ApiOperation({ summary: '유사 청크 검색' })
   async search(@Body() dto: SearchDto): Promise<SearchResult[]> {
-    return this.service.retrieve(dto.query, dto.topK, { type: dto.type });
+    const { query, topK, type } = dto;
+    return this.service.retrieve(query, topK, { type });
   }
 }

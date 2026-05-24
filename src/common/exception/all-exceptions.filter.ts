@@ -61,12 +61,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       if (typeof payload === 'string') {
         return { message: payload, error: exception.name };
       }
+
       const obj = payload as { message?: string | string[]; error?: string };
       return {
         message: obj.message ?? exception.message,
         error: obj.error ?? exception.name,
       };
     }
+
     return { message: '내부 서버 오류', error: 'InternalServerError' };
   }
 }
