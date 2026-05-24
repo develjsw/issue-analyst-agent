@@ -15,11 +15,11 @@ const DISTANCE = 'Cosine';
 @Injectable()
 export class QdrantVectorStore implements VectorStore, OnModuleInit {
   private readonly logger = new Logger(QdrantVectorStore.name);
-  private readonly client: QdrantClient;
+  private readonly qdrant: QdrantClient;
   private readonly collection: string;
 
   constructor(private readonly config: ConfigService) {
-    this.client = new QdrantClient({
+    this.qdrant = new QdrantClient({
       url: this.config.get<string>('QDRANT_URL'),
     });
     this.collection = this.config.get<string>('QDRANT_COLLECTION', 'documents');
@@ -27,13 +27,13 @@ export class QdrantVectorStore implements VectorStore, OnModuleInit {
 
   // 부팅 시 컬렉션 없으면 자동 생성
   async onModuleInit(): Promise<void> {
-    const exists = await this.client
+    const exists = await this.qdrant
       .collectionExists(this.collection)
       .then((r) => r.exists)
       .catch(() => false);
 
     if (!exists) {
-      await this.client.createCollection(this.collection, {
+      await this.qdrant.createCollection(this.collection, {
         vectors: { size: EMBEDDING_DIMENSION, distance: DISTANCE },
       });
       this.logger.log(`Qdrant 컬렉션 생성: ${this.collection}`);
@@ -41,7 +41,7 @@ export class QdrantVectorStore implements VectorStore, OnModuleInit {
   }
 
   async upsert(points: VectorPoint[]): Promise<void> {
-    await this.client.upsert(this.collection, {
+    await this.qdrant.upsert(this.collection, {
       wait: true,
       points: points.map((p) => ({
         id: p.id,
@@ -56,7 +56,7 @@ export class QdrantVectorStore implements VectorStore, OnModuleInit {
     limit: number,
     filter?: SearchFilter,
   ): Promise<SearchResult[]> {
-    const results = await this.client.search(this.collection, {
+    const results = await this.qdrant.search(this.collection, {
       vector,
       limit,
       with_payload: true,
@@ -74,7 +74,7 @@ export class QdrantVectorStore implements VectorStore, OnModuleInit {
   }
 
   async deleteByDocumentId(documentId: number): Promise<void> {
-    await this.client.delete(this.collection, {
+    await this.qdrant.delete(this.collection, {
       wait: true,
       filter: {
         must: [{ key: 'documentId', match: { value: documentId } }],
