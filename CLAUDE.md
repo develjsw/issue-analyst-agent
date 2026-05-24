@@ -54,6 +54,9 @@ Agent Workflow**로 자동화함
 - **Agent는 Tool을 통해서만 행동함** — DB/외부 직접 조회 금지, 모든 행동은 명시적 Tool 단위로 분리
 - **RAG는 근거 기반(grounded)임** — 출처 없는 답변 생성 금지, score·confidence·needHumanReview를
   응답에 포함
+- **검색 score 임계값은 하드코딩 하지 않음** — 같은 점수라도 임베딩 모델·거리 방식이 바뀌면 의미가
+  달라져 고정값은 안 통함. 따라서 임계값은 `evaluation/` 정답셋으로 정해 config에 두고, 모델을 바꾸면
+  코드 대신 평가만 다시 돌려 갱신함
 - **상태는 명시적으로 관리** — Agent 워크플로우 상태(`IssueAnalysisState`)를 타입으로 정의
 - **계층 분리** — Controller(입출력) → Service(도메인 로직) → Repository(데이터), LLM/벡터 접근은
   전용 서비스로 격리
