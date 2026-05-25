@@ -99,6 +99,7 @@ src/
  ├─ tool/                  # tool-registry + tools/*
  ├─ embedding/             # interface/(EmbedderInterface) + service/(OpenAIEmbedderService)
  ├─ vector/                # interface/(VectorStoreInterface) + service/(QdrantVectorStoreService)
+ ├─ llm/                   # interface/(LlmInterface=BaseChatModel) + module(ChatOpenAI 팩토리)
  └─ evaluation/            # 검색/응답 품질 평가, dataset
 ```
 
