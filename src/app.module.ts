@@ -10,6 +10,7 @@ import { DocumentModule } from './document/document.module';
 import { IssueModule } from './issue/issue.module';
 import { LlmModule } from './llm/llm.module';
 import { RagModule } from './rag/rag.module';
+import { ToolModule } from './tool/tool.module';
 import { VectorModule } from './vector/vector.module';
 
 @Module({
@@ -25,6 +26,7 @@ import { VectorModule } from './vector/vector.module';
     VectorModule,
     LlmModule,
     RagModule,
+    ToolModule,
   ],
   controllers: [AppController],
   providers: [AppService],

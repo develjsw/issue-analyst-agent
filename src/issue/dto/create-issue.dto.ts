@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsIn,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { ISSUE_CATEGORIES } from '../constant/issue-category';
+import type { IssueCategory } from '../constant/issue-category';
 
 export class CreateIssueDto {
   @ApiProperty({ example: '결제 완료 후 주문 상태가 변경되지 않음' })
@@ -15,8 +23,8 @@ export class CreateIssueDto {
   @MinLength(1)
   body: string;
 
-  @ApiProperty({ required: false, example: '결제' })
+  @ApiProperty({ required: false, enum: ISSUE_CATEGORIES, example: 'BUG' })
   @IsOptional()
-  @IsString()
-  category?: string;
+  @IsIn(ISSUE_CATEGORIES)
+  category?: IssueCategory;
 }

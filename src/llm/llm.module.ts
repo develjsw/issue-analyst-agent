@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LLM } from './interface/llm.interface';
 import type { LlmInterface } from './interface/llm.interface';
+import { ToolRunnerService } from './service/tool-runner.service';
 
 // 재현성 위해 별칭 대신 날짜 스냅샷 고정
 const MODEL = 'gpt-4o-mini-2024-07-18';
@@ -21,7 +22,8 @@ const MODEL = 'gpt-4o-mini-2024-07-18';
         }),
       inject: [ConfigService],
     },
+    ToolRunnerService,
   ],
-  exports: [LLM],
+  exports: [LLM, ToolRunnerService],
 })
 export class LlmModule {}
