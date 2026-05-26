@@ -60,6 +60,9 @@ Agent Workflow**로 자동화함
 - **상태는 명시적으로 관리** — Agent 워크플로우 상태(`IssueAnalysisState`)를 타입으로 정의
 - **계층 분리** — Controller(입출력) → Service(도메인 로직) → Repository(데이터), LLM/벡터 접근은
   전용 서비스로 격리
+- **모듈 공개 표면 최소화** — 기능은 대표 모듈 하나로만 노출하고 내부 구현 모듈은 숨김
+  (예: RAG는 `RagModule`만 import하고 내부의 `VectorModule`·`EmbeddingModule`엔 직접 의존하지 않음).
+  `@Global`은 인프라(config·logger·prisma)에만 쓰고, 도메인 모듈은 명시적 import 유지
 
 ```
 [Client / Swagger]

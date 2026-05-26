@@ -78,7 +78,7 @@ export class QdrantVectorStoreService
     }));
   }
 
-  async deleteById(documentId: number): Promise<void> {
+  async deleteByDocumentId(documentId: number): Promise<void> {
     await this.qdrant.delete(this.collection, {
       wait: true,
       filter: {

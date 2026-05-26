@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { SearchResult } from '../vector/interface/vector-store.interface';
+import type { SearchResult } from '../vector/interface/vector-store.interface';
 import { SearchDto } from './dto/search.dto';
 import { RagService } from './service/rag.service';
 

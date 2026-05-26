@@ -7,7 +7,8 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { DOCUMENT_TYPES } from '../../document/dto/create-document.dto';
+import { DOCUMENT_TYPES } from '../../document/constant/document-type';
+import type { DocumentType } from '../../document/constant/document-type';
 
 export class SearchDto {
   @ApiProperty({ example: '결제 후 주문 상태가 변경되지 않는 문제' })
@@ -32,7 +33,6 @@ export class SearchDto {
     description: '문서 타입 필터',
   })
   @IsOptional()
-  @IsString()
   @IsIn(DOCUMENT_TYPES)
-  type?: string;
+  type?: DocumentType;
 }

@@ -11,25 +11,25 @@ model Issue {
   id        Int      @id @default(autoincrement())
   title     String
   body      String   @db.Text
-  category  String? // classify Tool이 채우는 분류값
-  status    String   @default("OPEN")
+  category  String? // IssueCategory
+  status    String   @default("OPEN") // IssueStatus
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("issue") // OS별 대소문자 민감성 회피
+  @@map("issue") // OS 대소문자 회피
 }
 
 model Document {
   id        Int      @id @default(autoincrement())
   title     String   @db.VarChar(255)
   content   String   @db.LongText
-  type      String   @db.VarChar(50) // API_DOC | PLANNING_DOC | ERROR_LOG | ISSUE_HISTORY
+  type      String   @db.VarChar(50) // DocumentType
   source    String?  @db.VarChar(500)
-  isIndexed Boolean  @default(false) // Qdrant 임베딩 여부
+  isIndexed Boolean  @default(false) // Qdrant 인덱싱 여부
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([type]) // Qdrant 메타 필터링용
-  @@index([isIndexed]) // 미인덱스 배치 조회용
-  @@map("document") // OS별 대소문자 민감성 회피
+  @@index([type])
+  @@index([isIndexed])
+  @@map("document") // OS 대소문자 회피
 }

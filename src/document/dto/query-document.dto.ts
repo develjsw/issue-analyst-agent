@@ -1,22 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import {
-  IsBoolean,
-  IsIn,
-  IsInt,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
-import { DOCUMENT_TYPES } from './create-document.dto';
+import { IsBoolean, IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
+import { DOCUMENT_TYPES } from '../constant/document-type';
+import type { DocumentType } from '../constant/document-type';
 
 export class QueryDocumentDto {
   @ApiProperty({ required: false, enum: DOCUMENT_TYPES })
   @IsOptional()
-  @IsString()
   @IsIn(DOCUMENT_TYPES)
-  type?: string;
+  type?: DocumentType;
 
   @ApiProperty({ required: false, description: '임베딩 완료 여부 필터' })
   @IsOptional()

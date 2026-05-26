@@ -10,5 +10,6 @@ import { RetrieverService } from './service/retriever.service';
   imports: [VectorModule, EmbeddingModule, DocumentModule],
   controllers: [RagController],
   providers: [RagService, RetrieverService],
+  exports: [RagService],
 })
 export class RagModule {}

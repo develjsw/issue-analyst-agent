@@ -23,7 +23,6 @@ export class RagService {
     private readonly documentService: DocumentService,
   ) {}
 
-  // 문서 1건을 청킹 → 임베딩 → Qdrant 저장 → isIndexed=true
   async indexDocument(documentId: number): Promise<void> {
     const doc = await this.documentService.findOne(documentId);
 
@@ -32,8 +31,8 @@ export class RagService {
 
     const vectors = await this.embedder.embedMany(chunks.map((c) => c.content));
 
-    // 재인덱싱 시 고아벡터 방지를 위해 기존벡터 제거
-    await this.vectorStore.deleteById(documentId);
+    // 재인덱싱 대비 기존 벡터 제거
+    await this.vectorStore.deleteByDocumentId(documentId);
 
     const points = chunks.map((chunk, i) => ({
       id: randomUUID(),

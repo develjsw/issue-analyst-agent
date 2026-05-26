@@ -31,5 +31,5 @@ export interface VectorStoreInterface {
     limit: number,
     filter?: SearchFilter,
   ): Promise<SearchResult[]>;
-  deleteById(documentId: number): Promise<void>;
+  deleteByDocumentId(documentId: number): Promise<void>;
 }

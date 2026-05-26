@@ -6,13 +6,8 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-
-export const DOCUMENT_TYPES = [
-  'API_DOC',
-  'PLANNING_DOC',
-  'ERROR_LOG',
-  'ISSUE_HISTORY',
-] as const;
+import { DOCUMENT_TYPES } from '../constant/document-type';
+import type { DocumentType } from '../constant/document-type';
 
 export class CreateDocumentDto {
   @ApiProperty({ example: '결제 API v2 명세서' })
@@ -27,9 +22,8 @@ export class CreateDocumentDto {
   content: string;
 
   @ApiProperty({ enum: DOCUMENT_TYPES, example: 'API_DOC' })
-  @IsString()
   @IsIn(DOCUMENT_TYPES)
-  type: string;
+  type: DocumentType;
 
   @ApiProperty({
     required: false,
