@@ -1,6 +1,5 @@
 export const DOCUMENT_VECTOR_STORE = Symbol('DOCUMENT_VECTOR_STORE');
 
-// Document를 청크 단위로 인덱싱한 결과의 메타데이터
 export interface DocumentChunkPayload {
   documentId: number;
   chunkIndex: number;

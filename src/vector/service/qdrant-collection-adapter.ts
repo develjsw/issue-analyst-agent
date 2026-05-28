@@ -3,19 +3,17 @@ import { QdrantClient } from '@qdrant/js-client-rest';
 
 const DEFAULT_DISTANCE = 'Cosine';
 
-// 도메인을 모르는 Qdrant 단일 컬렉션 어댑터
-// 각 도메인 VectorStore 구현체가 자기 컬렉션의 어댑터를 합성해서 사용
 export type QdrantMatch = { key: string; match: { value: string | number } };
 
-export type RawPoint = {
+export type AdapterPoint<P> = {
   id: string;
   vector: number[];
-  payload: Record<string, unknown>;
+  payload: P;
 };
 
-export type RawSearchResult = {
+export type AdapterSearchResult<P> = {
   score: number;
-  payload: Record<string, unknown>;
+  payload: P;
 };
 
 export class QdrantCollectionAdapter {
@@ -44,19 +42,23 @@ export class QdrantCollectionAdapter {
     }
   }
 
-  async upsert(points: RawPoint[]): Promise<void> {
+  async upsert<P>(points: AdapterPoint<P>[]): Promise<void> {
     if (points.length === 0) return;
     await this.qdrant.upsert(this.collection, {
       wait: true,
-      points,
+      points: points.map((p) => ({
+        id: p.id,
+        vector: p.vector,
+        payload: p.payload as Record<string, unknown>,
+      })),
     });
   }
 
-  async search(
+  async search<P>(
     vector: number[],
     limit: number,
     must: QdrantMatch[],
-  ): Promise<RawSearchResult[]> {
+  ): Promise<AdapterSearchResult<P>[]> {
     const results = await this.qdrant.search(this.collection, {
       vector,
       limit,
@@ -66,12 +68,12 @@ export class QdrantCollectionAdapter {
 
     return results.map((r) => ({
       score: r.score,
-      payload: r.payload as Record<string, unknown>,
+      payload: r.payload as P,
     }));
   }
 
-  // 도메인 구현체가 빈 must를 못 넘기게 명시적 가드 - 전체 삭제 방지
   async deleteByMust(must: QdrantMatch[]): Promise<void> {
+    // 빈 must는 전체 삭제로 동작하므로 차단
     if (must.length === 0) {
       throw new Error('deleteByMust requires at least one match condition');
     }

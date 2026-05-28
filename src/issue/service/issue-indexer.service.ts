@@ -9,8 +9,7 @@ import type {
 } from '../../vector/interface/issue-vector-store.interface';
 import { IssueService } from './issue.service';
 
-// 1이슈=1벡터 (Linear/GitHub Issues 방식)
-// 본문이 매우 긴 이슈는 임베딩 토큰 한도(~8K) 모니터링 필요
+// 1 issue = 1 vector. 본문이 매우 길면 임베딩 토큰 한도(~8K) 주의
 @Injectable()
 export class IssueIndexerService {
   private readonly logger = new Logger(IssueIndexerService.name);
@@ -28,7 +27,6 @@ export class IssueIndexerService {
 
     const [vector] = await this.embedder.embedMany([text]);
 
-    // 재인덱싱 대비 기존 벡터 제거
     await this.vectorStore.deleteByIssueId(issueId);
 
     const point = {

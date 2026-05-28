@@ -16,13 +16,7 @@ export class QdrantIssueVectorStore implements IssueVectorStore {
   constructor(private readonly adapter: QdrantCollectionAdapter) {}
 
   async upsert(points: IssueVectorPoint[]): Promise<void> {
-    await this.adapter.upsert(
-      points.map((p) => ({
-        id: p.id,
-        vector: p.vector,
-        payload: p.payload as unknown as Record<string, unknown>,
-      })),
-    );
+    await this.adapter.upsert<IssuePayload>(points);
   }
 
   async search(
@@ -31,11 +25,7 @@ export class QdrantIssueVectorStore implements IssueVectorStore {
     filter?: IssueSearchFilter,
   ): Promise<IssueSearchResult[]> {
     const must = this.buildMust(filter);
-    const raw = await this.adapter.search(vector, limit, must);
-    return raw.map((r) => ({
-      score: r.score,
-      payload: r.payload as unknown as IssuePayload,
-    }));
+    return this.adapter.search<IssuePayload>(vector, limit, must);
   }
 
   async deleteByIssueId(issueId: number): Promise<void> {

@@ -60,22 +60,23 @@ Agent Workflow**로 자동화함
 - **상태는 명시적으로 관리** — Agent 워크플로우 상태(`IssueAnalysisState`)를 타입으로 정의
 - **계층 분리** — Controller(입출력) → Service(도메인 로직) → Repository(데이터), LLM/벡터 접근은
   전용 서비스로 격리
-- **도메인 중심 모듈 분리** — 인덱싱·검색은 각 도메인 모듈 안에 둠. "RAG·Common·Manager" 같은
-  우산 모듈에 여러 도메인 책임을 묶지 않음. 인프라(VectorStore·Embedder)는 도메인을 모르고,
-  도메인이 인프라에 의존하는 방향만 허용함
-- **인프라 인터페이스는 도메인별 분리** — `DocumentVectorStore`·`IssueVectorStore`처럼 컬렉션·소스별로
-  분리. union 필드·payload로 합치면 컬렉션 추가 시 인터페이스가 깨지는 OCP 위반이 됨.
-  공용 부분은 작은 어댑터(`QdrantCollectionAdapter`)로 추출
+- **도메인 중심 모듈 분리** - 인덱싱·검색은 각 도메인 모듈에 둠
+  RAG·Common·Manager 같은 이름으로 여러 도메인 책임을 한 모듈에 묶지 않음
+  인프라(VectorStore·Embedder)는 도메인을 모름
+  의존 방향은 도메인 → 인프라 단방향만 허용
+- **인프라 인터페이스는 도메인별 분리** - `DocumentVectorStore`·`IssueVectorStore`처럼 도메인별로 분리함
+  union payload·filter로 합치면 컬렉션이 늘 때마다 인터페이스가 깨짐 (OCP 위반)
+  공통은 작은 어댑터(`QdrantCollectionAdapter`)로만 추출
 - **모듈 공개 표면 최소화** — 도메인 모듈은 명시적 import 유지. `@Global`은 인프라(config·logger·prisma)에만
 
 ```
 [Client / Swagger]
       │
 [NestJS API Server]
-      ├─ issue / document / rag / agent / tool / evaluation 모듈
+      ├─ issue / document / agent / tool / evaluation 모듈
       ├─ MySQL (Prisma)
       ├─ Redis (cache/queue)
-      ├─ Qdrant (VectorStore 인터페이스)
+      ├─ Qdrant (도메인별 VectorStore)
       └─ LLM API
 ```
 

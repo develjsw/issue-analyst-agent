@@ -7,15 +7,12 @@ import { QdrantCollectionAdapter } from './service/qdrant-collection-adapter';
 import { QdrantDocumentVectorStore } from './service/qdrant-document-vector-store.service';
 import { QdrantIssueVectorStore } from './service/qdrant-issue-vector-store.service';
 
-// text-embedding-3-small 차원에 맞춰 컬렉션 생성
-// 임베딩 모델 변경으로 차원이 바뀌면 재인덱싱 필요
+// text-embedding-3-small 차원. 모델 변경 시 재인덱싱 필요
 const EMBEDDING_DIMENSION = 1536;
 
 const DOCUMENT_ADAPTER = Symbol('DOCUMENT_ADAPTER');
 const ISSUE_ADAPTER = Symbol('ISSUE_ADAPTER');
 
-// async factory로 adapter 생성과 컬렉션 보장을 한 단계에서 처리
-// useFactory로 만든 provider도 OnModuleInit이 호출되긴 하나, ensure를 factory에 묶어두는 게 더 명시적
 const buildAdapter = (collectionEnvKey: string, defaultName: string) => ({
   inject: [ConfigService],
   useFactory: async (config: ConfigService) => {

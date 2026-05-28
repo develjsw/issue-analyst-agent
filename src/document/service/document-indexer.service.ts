@@ -29,7 +29,6 @@ export class DocumentIndexerService {
 
     const vectors = await this.embedder.embedMany(chunks.map((c) => c.content));
 
-    // 재인덱싱 대비 기존 벡터 제거
     await this.vectorStore.deleteByDocumentId(documentId);
 
     const points = chunks.map((chunk, i) => ({

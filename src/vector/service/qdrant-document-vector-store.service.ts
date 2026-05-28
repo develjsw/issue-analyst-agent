@@ -16,13 +16,7 @@ export class QdrantDocumentVectorStore implements DocumentVectorStore {
   constructor(private readonly adapter: QdrantCollectionAdapter) {}
 
   async upsert(points: DocumentVectorPoint[]): Promise<void> {
-    await this.adapter.upsert(
-      points.map((p) => ({
-        id: p.id,
-        vector: p.vector,
-        payload: p.payload as unknown as Record<string, unknown>,
-      })),
-    );
+    await this.adapter.upsert<DocumentChunkPayload>(points);
   }
 
   async search(
@@ -31,11 +25,7 @@ export class QdrantDocumentVectorStore implements DocumentVectorStore {
     filter?: DocumentSearchFilter,
   ): Promise<DocumentSearchResult[]> {
     const must = this.buildMust(filter);
-    const raw = await this.adapter.search(vector, limit, must);
-    return raw.map((r) => ({
-      score: r.score,
-      payload: r.payload as unknown as DocumentChunkPayload,
-    }));
+    return this.adapter.search<DocumentChunkPayload>(vector, limit, must);
   }
 
   async deleteByDocumentId(documentId: number): Promise<void> {

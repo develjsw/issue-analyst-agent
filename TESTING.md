@@ -1,7 +1,8 @@
 # 테스트 가이드
 
 현재 구현된 기능(Issue/Document CRUD · Document 인덱싱·검색 · Issue 인덱싱 · Tool Calling 분류)을 직접 시연하는 방법
-가장 편한 방법은 Swagger UI(`http://localhost:3000/docs`)에서 클릭 — 아래 curl은 git bash 기준 참고용
+가장 편한 방법은 Swagger UI(`http://localhost:3000/docs`)에서 클릭
+아래 curl은 git bash 기준 참고용
 
 ---
 
@@ -22,7 +23,7 @@ pnpm run start:dev
 
 ---
 
-## 시나리오 A — Document 인덱싱·검색
+## 시나리오 A - Document 인덱싱·검색
 
 > OPENAI_API_KEY 필요 (임베딩)
 
@@ -63,10 +64,11 @@ curl -X POST http://localhost:3000/document/search \
 
 ---
 
-## 시나리오 B — Issue 벡터 인덱싱 (백필)
+## 시나리오 B - Issue 벡터 인덱싱 (백필)
 
 > OPENAI_API_KEY 필요 (임베딩)
-> Step 1a 시점: 인덱싱은 백필 엔드포인트로 수동. Step 1b에서 분류 완료 시 자동 인덱싱 도입 예정
+> Step 1a 시점: 인덱싱은 백필 엔드포인트로 수동
+> Step 1b에서 분류 완료 시 자동 인덱싱 도입 예정
 
 ### B-1. 이슈 인덱싱 (1이슈=1벡터 → Qdrant `issues` 컬렉션 저장)
 
@@ -80,7 +82,7 @@ curl -X POST http://localhost:3000/issue/3/index   # 3 = 등록된 이슈 id
 
 ---
 
-## 시나리오 C — Tool Calling 이슈 분류
+## 시나리오 C - Tool Calling 이슈 분류
 
 > OPENAI_API_KEY 필요 (LLM)
 

@@ -1,7 +1,6 @@
 export const ISSUE_VECTOR_STORE = Symbol('ISSUE_VECTOR_STORE');
 
-// 1이슈=1벡터, payload는 검색 결과 즉시 표시용 최소만
-// 본문(body)은 호출측이 DB에서 lazy load (payload 경량화)
+// body는 제외 — payload 경량화, 필요 시 DB에서 lazy load
 export interface IssuePayload {
   issueId: number;
   title: string;
