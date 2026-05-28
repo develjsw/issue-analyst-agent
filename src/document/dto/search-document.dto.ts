@@ -7,10 +7,10 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
-import { DOCUMENT_TYPES } from '../../document/constant/document-type';
-import type { DocumentType } from '../../document/constant/document-type';
+import { DOCUMENT_TYPES } from '../constant/document-type';
+import type { DocumentType } from '../constant/document-type';
 
-export class SearchDto {
+export class SearchDocumentDto {
   @ApiProperty({ example: '결제 후 주문 상태가 변경되지 않는 문제' })
   @IsString()
   @MinLength(1)

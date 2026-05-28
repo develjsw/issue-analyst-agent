@@ -1,29 +1,27 @@
 import { randomUUID } from 'node:crypto';
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { VECTOR_STORE } from '../../vector/interface/vector-store.interface';
-import type {
-  SearchFilter,
-  SearchResult,
-  VectorStoreInterface,
-} from '../../vector/interface/vector-store.interface';
 import { EMBEDDER } from '../../embedding/interface/embedder.interface';
 import type { EmbedderInterface } from '../../embedding/interface/embedder.interface';
-import { DocumentService } from '../../document/service/document.service';
+import { DOCUMENT_VECTOR_STORE } from '../../vector/interface/document-vector-store.interface';
+import type {
+  DocumentChunkPayload,
+  DocumentVectorStore,
+} from '../../vector/interface/document-vector-store.interface';
 import { chunkText } from '../helper/chunker';
-import { RetrieverService } from './retriever.service';
+import { DocumentService } from './document.service';
 
 @Injectable()
-export class RagService {
-  private readonly logger = new Logger(RagService.name);
+export class DocumentIndexerService {
+  private readonly logger = new Logger(DocumentIndexerService.name);
 
   constructor(
     @Inject(EMBEDDER) private readonly embedder: EmbedderInterface,
-    @Inject(VECTOR_STORE) private readonly vectorStore: VectorStoreInterface,
-    private readonly retrieverService: RetrieverService,
+    @Inject(DOCUMENT_VECTOR_STORE)
+    private readonly vectorStore: DocumentVectorStore,
     private readonly documentService: DocumentService,
   ) {}
 
-  async indexDocument(documentId: number): Promise<void> {
+  async index(documentId: number): Promise<void> {
     const doc = await this.documentService.findOne(documentId);
 
     const chunks = chunkText(doc.content);
@@ -43,20 +41,12 @@ export class RagService {
         content: chunk.content,
         type: doc.type,
         ...(doc.source && { source: doc.source }),
-      },
+      } satisfies DocumentChunkPayload,
     }));
 
     await this.vectorStore.upsert(points);
     await this.documentService.markIndexed(documentId);
 
     this.logger.log(`문서 ${documentId} 인덱싱 완료`);
-  }
-
-  async retrieve(
-    query: string,
-    topK?: number,
-    filter?: SearchFilter,
-  ): Promise<SearchResult[]> {
-    return this.retrieverService.retrieve(query, topK, filter);
   }
 }

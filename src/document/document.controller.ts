@@ -13,9 +13,13 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Document } from '@prisma/client';
+import type { DocumentSearchResult } from '../vector/interface/document-vector-store.interface';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { QueryDocumentDto } from './dto/query-document.dto';
+import { SearchDocumentDto } from './dto/search-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
+import { DocumentIndexerService } from './service/document-indexer.service';
+import { DocumentSearchService } from './service/document-search.service';
 import {
   DocumentService,
   PaginatedDocuments,
@@ -24,12 +28,25 @@ import {
 @ApiTags('Document')
 @Controller('document')
 export class DocumentController {
-  constructor(private readonly documentService: DocumentService) {}
+  constructor(
+    private readonly documentService: DocumentService,
+    private readonly documentIndexer: DocumentIndexerService,
+    private readonly documentSearch: DocumentSearchService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: '문서 등록' })
   async create(@Body() dto: CreateDocumentDto): Promise<Document> {
     return this.documentService.create(dto);
+  }
+
+  @Post('search')
+  @ApiOperation({ summary: '유사 문서 청크 검색' })
+  async search(
+    @Body() dto: SearchDocumentDto,
+  ): Promise<DocumentSearchResult[]> {
+    const { query, topK, type } = dto;
+    return this.documentSearch.search(query, topK, { type });
   }
 
   @Get()
@@ -55,11 +72,11 @@ export class DocumentController {
     return this.documentService.update(id, dto);
   }
 
-  @Patch(':id/index')
+  @Post(':id/index')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: '문서 임베딩 완료 처리 (RAG 파이프라인 호출용)' })
-  async markIndexed(@Param('id', ParseIntPipe) id: number): Promise<Document> {
-    return this.documentService.markIndexed(id);
+  @ApiOperation({ summary: '문서 인덱싱 (청킹 → 임베딩 → Qdrant 저장)' })
+  async index(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.documentIndexer.index(id);
   }
 
   @Delete(':id')

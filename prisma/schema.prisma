@@ -13,9 +13,11 @@ model Issue {
   body      String   @db.Text
   category  String? // IssueCategory
   status    String   @default("OPEN") // IssueStatus
+  isIndexed Boolean  @default(false) // Qdrant 인덱싱 여부
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([isIndexed])
   @@map("issue") // OS 대소문자 회피
 }
 

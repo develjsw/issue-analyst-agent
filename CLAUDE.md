@@ -60,9 +60,13 @@ Agent Workflow**로 자동화함
 - **상태는 명시적으로 관리** — Agent 워크플로우 상태(`IssueAnalysisState`)를 타입으로 정의
 - **계층 분리** — Controller(입출력) → Service(도메인 로직) → Repository(데이터), LLM/벡터 접근은
   전용 서비스로 격리
-- **모듈 공개 표면 최소화** — 기능은 대표 모듈 하나로만 노출하고 내부 구현 모듈은 숨김
-  (예: RAG는 `RagModule`만 import하고 내부의 `VectorModule`·`EmbeddingModule`엔 직접 의존하지 않음).
-  `@Global`은 인프라(config·logger·prisma)에만 쓰고, 도메인 모듈은 명시적 import 유지
+- **도메인 중심 모듈 분리** — 인덱싱·검색은 각 도메인 모듈 안에 둠. "RAG·Common·Manager" 같은
+  우산 모듈에 여러 도메인 책임을 묶지 않음. 인프라(VectorStore·Embedder)는 도메인을 모르고,
+  도메인이 인프라에 의존하는 방향만 허용함
+- **인프라 인터페이스는 도메인별 분리** — `DocumentVectorStore`·`IssueVectorStore`처럼 컬렉션·소스별로
+  분리. union 필드·payload로 합치면 컬렉션 추가 시 인터페이스가 깨지는 OCP 위반이 됨.
+  공용 부분은 작은 어댑터(`QdrantCollectionAdapter`)로 추출
+- **모듈 공개 표면 최소화** — 도메인 모듈은 명시적 import 유지. `@Global`은 인프라(config·logger·prisma)에만
 
 ```
 [Client / Swagger]
@@ -85,23 +89,27 @@ prisma/
 src/
  ├─ app.module.ts
  ├─ common/                # config, logger, exception, interceptor, prisma, swagger
- ├─ issue/                 # 도메인 모듈 표준 레이아웃
+ ├─ issue/                 # 도메인 모듈 - 인덱싱·검색을 자기 안에 가짐
  │   ├─ dto/
- │   ├─ service/           # *.service.ts
- │   ├─ repository/        # *.repository.ts
+ │   ├─ service/           # issue.service, issue-indexer.service (1이슈=1벡터)
+ │   ├─ repository/
  │   ├─ issue.controller.ts
  │   └─ issue.module.ts
- ├─ document/              # issue/ 와 동일 레이아웃
- ├─ rag/                   # 도메인 모듈 표준 레이아웃
+ ├─ document/              # 도메인 모듈 - 인덱싱·검색을 자기 안에 가짐
  │   ├─ dto/
  │   ├─ helper/            # chunker (순수 함수)
- │   └─ service/           # retriever, rag.service
- ├─ agent/
+ │   ├─ service/           # document.service, document-indexer, document-search
+ │   ├─ repository/
+ │   ├─ document.controller.ts
+ │   └─ document.module.ts
+ ├─ agent/                 # (Step 4) LangGraph - 진짜 RAG(검색+LLM 답변 생성)는 여기서 등장
  │   ├─ graph/             # issue-analysis.graph.ts, *.state.ts
  │   └─ node/              # classify, retrieve, analyze, plan, report
  ├─ tool/                  # tool-registry + tools/*
  ├─ embedding/             # interface/(EmbedderInterface) + service/(OpenAIEmbedderService)
- ├─ vector/                # interface/(VectorStoreInterface) + service/(QdrantVectorStoreService)
+ ├─ vector/                # 도메인별 인터페이스 분리, 공용 Qdrant 어댑터 합성
+ │   ├─ interface/         # document-vector-store, issue-vector-store
+ │   └─ service/           # qdrant-collection-adapter(공용), qdrant-{document,issue}-vector-store
  ├─ llm/                   # interface/(LlmInterface=BaseChatModel) + module(ChatOpenAI 팩토리)
  └─ evaluation/            # 검색/응답 품질 평가, dataset
 ```
@@ -144,8 +152,8 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 ```
 
 - **type**: `feat` `fix` `docs` `refactor` `test` `chore` `perf` `build` `ci`
-- **scope**: `issue` `document` `rag` `agent` `tool` `vector` `eval` `infra` `common` `config`
-- **예시**: `feat(rag): 문서 chunking·embedding 파이프라인 구현`
+- **scope**: `issue` `document` `agent` `tool` `vector` `embedding` `eval` `infra` `common` `config`
+- **예시**: `feat(document): 청킹·임베딩 인덱서 추가`
 - **작업 단위 커밋**: 많은 양을 몰아서 커밋하지 않고 의미 있는 작업 단위마다 나눠서 커밋함.
   하나의 커밋은 하나의 목적(기능/수정/리팩터링)만 담고, 변경 이력이 곧 학습 기록이 되도록
   작게·자주 커밋하는 것을 원칙으로 함

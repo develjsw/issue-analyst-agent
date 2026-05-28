@@ -45,7 +45,6 @@ export class DocumentService {
     return this.documentRepository.update(id, dto);
   }
 
-  // RAG 파이프라인이 임베딩 완료 후 호출
   async markIndexed(id: number): Promise<Document> {
     await this.findOne(id);
     return this.documentRepository.update(id, { isIndexed: true });

@@ -29,6 +29,11 @@ export class IssueService {
     return this.issueRepository.update(id, dto);
   }
 
+  async markIndexed(id: number): Promise<Issue> {
+    await this.findOne(id);
+    return this.issueRepository.update(id, { isIndexed: true });
+  }
+
   async remove(id: number): Promise<void> {
     await this.findOne(id);
     await this.issueRepository.delete(id);
